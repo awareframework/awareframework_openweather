@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:awareframework_core/awareframework_core.dart';
 import 'package:flutter/material.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 /// init sensor
 class OpenWeatherSensor extends AwareSensorCore {
@@ -14,12 +13,12 @@ class OpenWeatherSensor extends AwareSensorCore {
   OpenWeatherSensor(OpenWeatherSensorConfig config):this.convenience(config);
   OpenWeatherSensor.convenience(config) : super(config){
     /// Set sensor method & event channels
-    super.setSensorChannels(_openWeatherMethod, _openWeatherStream);
+    super.setMethodChannel(_openWeatherMethod);
   }
 
   /// A sensor observer instance
-  Stream<Map<String,dynamic>> get onDataChanged {
-     return super.receiveBroadcastStream("on_data_changed").map((dynamic event) => Map<String,dynamic>.from(event));
+  Stream<Map<String,dynamic>> onDataChanged(String id) {
+    return super.getBroadcastStream(_openWeatherStream, "on_data_changed", id).map((dynamic event) => Map<String,dynamic>.from(event));
   }
 }
 
@@ -43,9 +42,10 @@ class OpenWeatherSensorConfig extends AwareSensorConfig{
 
 /// Make an AwareWidget
 class OpenWeatherCard extends StatefulWidget {
-  OpenWeatherCard({Key key, @required this.sensor}) : super(key: key);
+  OpenWeatherCard({Key key, @required this.sensor, this.cardId = "openweather_card" }) : super(key: key);
 
   OpenWeatherSensor sensor;
+  String cardId;
 
   @override
   OpenWeatherCardState createState() => new OpenWeatherCardState();
@@ -61,7 +61,7 @@ class OpenWeatherCardState extends State<OpenWeatherCard> {
 
     super.initState();
     // set observer
-    widget.sensor.onDataChanged.listen((event) {
+    widget.sensor.onDataChanged(widget.cardId).listen((event) {
       setState((){
         if(event!=null){
           DateTime.fromMicrosecondsSinceEpoch(event['timestamp']);
@@ -85,6 +85,13 @@ class OpenWeatherCardState extends State<OpenWeatherCard> {
       title: "Open Weather",
       sensor: widget.sensor
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    widget.sensor.cancelBroadcastStream(widget.cardId);
+    super.dispose();
   }
 
 }

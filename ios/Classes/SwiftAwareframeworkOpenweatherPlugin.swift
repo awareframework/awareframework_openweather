@@ -29,11 +29,13 @@ public class SwiftAwareframeworkOpenWeatherPlugin: AwareFlutterPluginCore, Flutt
     }
 
     public static func register(with registrar: FlutterPluginRegistrar) {
-        // add own channel
-        super.setChannels(with: registrar,
-                          instance: SwiftAwareframeworkOpenWeatherPlugin(),
-                          methodChannelName: "awareframework_openweather/method",
-                          eventChannelName: "awareframework_openweather/event")
+        let instance = SwiftAwareframeworkOpenWeatherPlugin();
+        super.setMethodChannel(with: registrar,
+                               instance: instance,
+                               channelName: "awareframework_openweather/method")
+        super.setEventChannels(with: registrar,
+                               instance: instance,
+                               channelNames: ["awareframework_openweather/event"])
 
     }
 

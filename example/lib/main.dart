@@ -28,6 +28,8 @@ class _MyAppState extends State<MyApp> {
 
     sensor = new OpenWeatherSensor(config);
 
+    sensor.start();
+
   }
 
   @override
