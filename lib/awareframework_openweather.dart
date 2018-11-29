@@ -9,20 +9,23 @@ class OpenWeatherSensor extends AwareSensorCore {
   static const MethodChannel _openWeatherMethod = const MethodChannel('awareframework_openweather/method');
   static const EventChannel  _openWeatherStream  = const EventChannel('awareframework_openweather/event');
 
-  /// Init Openweather Sensor with OpenweatherSensorConfig
   OpenWeatherSensor(OpenWeatherSensorConfig config):this.convenience(config);
   OpenWeatherSensor.convenience(config) : super(config){
-    /// Set sensor method & event channels
     super.setMethodChannel(_openWeatherMethod);
   }
 
   /// A sensor observer instance
-  Stream<Map<String,dynamic>> onDataChanged(String id) {
-    return super.getBroadcastStream(_openWeatherStream, "on_data_changed", id).map((dynamic event) => Map<String,dynamic>.from(event));
+  Stream<Map<String,dynamic>> get onDataChanged{
+    return super.getBroadcastStream(_openWeatherStream, "on_data_changed").map((dynamic event) => Map<String,dynamic>.from(event));
+  }
+
+  @override
+  void cancelAllEventChannels() {
+    super.cancelBroadcastStream("on_data_changed");
   }
 }
 
-class OpenWeatherSensorConfig extends AwareSensorConfig{
+class OpenWeatherSensorConfig extends AwareSensorConfig {
   OpenWeatherSensorConfig();
 
   int interval  = 15; // 15min
@@ -42,10 +45,11 @@ class OpenWeatherSensorConfig extends AwareSensorConfig{
 
 /// Make an AwareWidget
 class OpenWeatherCard extends StatefulWidget {
-  OpenWeatherCard({Key key, @required this.sensor, this.cardId = "openweather_card" }) : super(key: key);
+  OpenWeatherCard({Key key, @required this.sensor }) : super(key: key);
 
-  OpenWeatherSensor sensor;
-  String cardId;
+  final OpenWeatherSensor sensor;
+
+  String data = "";
 
   @override
   OpenWeatherCardState createState() => new OpenWeatherCardState();
@@ -54,18 +58,16 @@ class OpenWeatherCard extends StatefulWidget {
 
 class OpenWeatherCardState extends State<OpenWeatherCard> {
 
-  String data = "";
-
   @override
   void initState() {
 
     super.initState();
     // set observer
-    widget.sensor.onDataChanged(widget.cardId).listen((event) {
+    widget.sensor.onDataChanged.listen((event) {
       setState((){
         if(event!=null){
           DateTime.fromMicrosecondsSinceEpoch(event['timestamp']);
-          data = event.toString();
+          widget.data = event.toString();
         }
       });
     }, onError: (dynamic error) {
@@ -80,7 +82,7 @@ class OpenWeatherCardState extends State<OpenWeatherCard> {
     return new AwareCard(
       contentWidget: SizedBox(
           width: MediaQuery.of(context).size.width*0.8,
-          child: new Text(data),
+          child: new Text(widget.data),
         ),
       title: "Open Weather",
       sensor: widget.sensor
@@ -89,8 +91,7 @@ class OpenWeatherCardState extends State<OpenWeatherCard> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    widget.sensor.cancelBroadcastStream(widget.cardId);
+    widget.sensor.cancelAllEventChannels();
     super.dispose();
   }
 
