@@ -35,7 +35,8 @@ public class SwiftAwareframeworkOpenWeatherPlugin: AwareFlutterPluginCore, Flutt
                                channelName: "awareframework_openweather/method")
         super.setEventChannels(with: registrar,
                                instance: instance,
-                               channelNames: ["awareframework_openweather/event"])
+                               channelNames: ["awareframework_openweather/event",
+                                              "awareframework_openweather/event_on_data_changed"])
 
     }
 

@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
       ..interval = 1
       ..apiKey   = "54e5dee2e6a2479e0cc963cf20f233cc";
 
-    sensor = new OpenWeatherSensor(config);
+    sensor = new OpenWeatherSensor.init(config);
 
     sensor.start();
 

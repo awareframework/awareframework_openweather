@@ -1,6 +1,8 @@
 # Aware Openweather
 
-TODO
+[![Build Status](https://travis-ci.org/awareframework/awareframework_openweather.svg?branch=master)](https://travis-ci.org/awareframework/awareframework_openweather)
+
+The Open Weather plugin allows us to collect weather information based on your location.
 
 ## Install the plugin into project
 1. Edit `pubspec.yaml`
@@ -16,13 +18,14 @@ import 'package:awareframework_core/awareframework_core.dart';
 ```
 
 ## Public functions
-### openweather Sensor
+### Open Weather Sensor
 - `start()`
 - `stop()` 
-- `sync(force: Boolean)`
+- `sync(boolean force)`
 - `enable()`
 - `disable()`
 - `isEnable()`
+- `setLabel(String label)`
 
 ### Configuration Keys
 TODO
@@ -45,19 +48,19 @@ The data representations is different between Android and iOS. Following links p
 ## Example usage
 ```dart
 // init config
-var config = OpenweatherSensorConfig()
+var config = OpenWeatherSensorConfig()
   ..debug = true
   ..label = "label";
 
 // init sensor
-var sensor = new OpenweatherSensor(config);
+var sensor = new OpenWeatherSensor.init(config);
 
-void mathod(){
+void method(){
     /// start 
     sensor.start();
     
     /// set observer
-    sensor.onDataChanged.listen((Map<String,dynamic> result){
+    sensor.onDataChanged.listen((OpenWeatherData data){
       setState((){
         // Your code here
       });
