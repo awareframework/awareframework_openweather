@@ -1,4 +1,4 @@
-# Aware Openweather
+# Aware Open Weather
 
 [![Build Status](https://travis-ci.org/awareframework/awareframework_openweather.svg?branch=master)](https://travis-ci.org/awareframework/awareframework_openweather)
 
@@ -21,7 +21,7 @@ import 'package:awareframework_core/awareframework_core.dart';
 ### Open Weather Sensor
 - `start()`
 - `stop()` 
-- `sync(boolean force)`
+- `sync(bool force)`
 - `enable()`
 - `disable()`
 - `isEnable()`
